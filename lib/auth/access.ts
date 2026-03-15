@@ -1,34 +1,24 @@
 export const ADMIN_EMAIL = "admin@admin.com";
-export const USER_DASHBOARD_PATH = "/dashboard";
-export const ADMIN_DASHBOARD_PATH = "/admin/dashboard";
+export const USER__PATH = "/dashboard";
+export const ADMIN_PATH = "/admin/users";
 
 type RoleValue = string | null | undefined;
 
-const normalizeRole = (role: RoleValue) => (role ?? "").toUpperCase();
-
-export const isAdminIdentity = ({
-  email,
-  role,
-}: {
-  email?: string | null;
-  role?: RoleValue;
-}): boolean => {
-  // Regra futura: role tem prioridade sobre email.
-  if (normalizeRole(role) === "ADMIN") {
-    return true;
-  }
-
-  return (email ?? "").trim().toLowerCase() === ADMIN_EMAIL;
+// Verifica se o scope contém ROLE_ADMIN
+export const isAdminByScope = (scope?: string | null): boolean => {
+  if (!scope) return false;
+  return scope.includes("ROLE_ADMIN");
 };
 
 export const getPostAuthRedirectPath = ({
   email,
-  role,
+  scope,
 }: {
   email?: string | null;
-  role?: RoleValue;
+  scope?: RoleValue;
 }): string => {
-  return isAdminIdentity({ email, role })
-    ? ADMIN_DASHBOARD_PATH
-    : USER_DASHBOARD_PATH;
+  if (isAdminByScope(scope)) {
+    return ADMIN_PATH;
+  }
+  return USER__PATH;
 };
