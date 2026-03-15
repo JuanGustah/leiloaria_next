@@ -1,5 +1,6 @@
 export interface CategoriaRequest {
   nome: string;
+  userId?: number;
 }
 
 export interface CategoriaResponse {

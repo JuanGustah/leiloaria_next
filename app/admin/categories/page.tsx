@@ -7,6 +7,7 @@ import { CategoryForm, CategoryTable } from "@/app/components/admin/categories";
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoriaResponse[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<CategoriaResponse | null>(null);
+  const [formMode, setFormMode] = useState<"create" | "edit" | "sub">("create");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -35,19 +36,33 @@ export default function CategoriesPage() {
 
   const handleOpenForm = (cat?: CategoriaResponse) => {
     setSelectedCategory(cat || null);
+    setFormMode(cat ? "edit" : "create");
+    setIsFormOpen(true);
+  };
+
+  const handleOpenSubcategoryForm = (cat: CategoriaResponse) => {
+    setSelectedCategory(cat);
+    setFormMode("sub");
     setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setSelectedCategory(null);
+    setFormMode("create");
   };
 
   const handleSubmit = async (data: CategoriaRequest) => {
     setIsSaving(true);
     try {
       let response;
-      if (selectedCategory) {
+      if (formMode === "sub" && selectedCategory) {
+        response = await fetch(`/api/admin/categories/${selectedCategory.id}/subcategories`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome: data.nome }),
+        });
+      } else if (selectedCategory) {
         response = await fetch(`/api/admin/categories/${selectedCategory.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -109,13 +124,15 @@ export default function CategoriesPage() {
         <CategoryTable
           categories={categories}
           onEdit={handleOpenForm}
+          onAddSubcategory={handleOpenSubcategoryForm}
           onDelete={handleDelete}
           isLoading={isLoading}
         />
       </div>
       {isFormOpen && (
         <CategoryForm
-          category={selectedCategory}
+          category={formMode === "sub" ? null : selectedCategory}
+          title={formMode === "sub" ? "Nova Subcategoria" : undefined}
           onSubmit={handleSubmit}
           onCancel={handleCloseForm}
           isLoading={isSaving}

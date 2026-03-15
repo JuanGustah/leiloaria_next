@@ -71,8 +71,11 @@ export async function apiPatch<T>(
   return apiCall<T>(url, { method: "PATCH", body });
 }
 
-export async function apiDelete<T>(url: string): Promise<ApiResponse<T>> {
-  return apiCall<T>(url, { method: "DELETE" });
+export async function apiDelete<T>(
+  url: string,
+  body?: any
+): Promise<ApiResponse<T>> {
+  return apiCall<T>(url, { method: "DELETE", body });
 }
 
 export async function apiPut<T>(

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiPatch, apiDelete } from "@/lib/api";
+import { apiPatch, apiDelete, apiGet } from "@/lib/api";
+import { Usuario } from "@/lib/auth/types";
 import { CategoriaRequest, CategoriaResponse } from "@/lib/categories/types";
 
 export async function PATCH(
@@ -17,7 +18,18 @@ export async function PATCH(
       );
     }
 
-    const response = await apiPatch<CategoriaResponse>(`/categorias/${id}`, body);
+    const meResponse = await apiGet<Usuario>(`/users/me`);
+    if (!meResponse.ok || !meResponse.data?.id) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: meResponse.status || 401 }
+      );
+    }
+
+    const response = await apiPatch<CategoriaResponse>(`/categorias/${id}`, {
+      ...body,
+      userId: meResponse.data.id,
+    });
 
     if (!response.ok) {
       return NextResponse.json(
@@ -38,7 +50,17 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const response = await apiDelete(`/categorias/${id}`);
+    const meResponse = await apiGet<Usuario>(`/users/me`);
+    if (!meResponse.ok || !meResponse.data?.id) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: meResponse.status || 401 }
+      );
+    }
+
+    const response = await apiDelete(`/categorias/${id}`, {
+      userId: meResponse.data.id,
+    });
 
     if (!response.ok) {
       return NextResponse.json(
