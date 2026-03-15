@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_EMAIL, getPostAuthRedirectPath } from "@/lib/auth/access";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const email = request.cookies.get("auth_email")?.value;
   const pathname = request.nextUrl.pathname;
