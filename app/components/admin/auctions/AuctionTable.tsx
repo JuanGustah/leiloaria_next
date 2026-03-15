@@ -59,6 +59,15 @@ export default function AuctionTable({
     }
   };
 
+  const formatCurrency = (value: unknown) => {
+    const numberValue = Number(value);
+    if (!Number.isFinite(numberValue)) {
+      return "-";
+    }
+
+    return numberValue.toFixed(2);
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
@@ -81,7 +90,7 @@ export default function AuctionTable({
             >
               <td className="px-3 py-3 text-[#414059]">{auction.id}</td>
               <td className="px-3 py-3 text-[#414059] font-medium">{auction.nome}</td>
-              <td className="px-3 py-3 text-[#414059]">R$ {parseFloat(String(auction.lanceMinimo)).toFixed(2)}</td>
+              <td className="px-3 py-3 text-[#414059]">R$ {formatCurrency(auction.lanceMinimo)}</td>
               <td className="px-3 py-3 text-[#414059] text-xs">
                 {formatDateTime(auction.inicio)}
               </td>

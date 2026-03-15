@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { LanceFormData, LanceResponse } from "@/lib/lances/types";
+import { useUser } from "@/lib/context/UserContext";
 
 interface LanceFormProps {
   lance?: LanceResponse | null;
@@ -16,6 +17,7 @@ export default function LanceForm({
   onCancel,
   isLoading,
 }: LanceFormProps) {
+  const { user } = useUser();
   const [formData, setFormData] = useState<LanceFormData>({
     valor: "",
     loteId: "",
@@ -28,17 +30,18 @@ export default function LanceForm({
       setFormData({
         valor: String(lance.valor || ""),
         loteId: String(lance.lote?.id || ""),
-        usuarioId: String(lance.usuario?.id || ""),
+        usuarioId: String(lance.usuario?.id || user?.id || ""),
       });
     } else {
+      // Auto-preencher com usuário do contexto
       setFormData({
         valor: "",
         loteId: "",
-        usuarioId: "",
+        usuarioId: String(user?.id || ""),
       });
     }
     setErrors({});
-  }, [lance]);
+  }, [lance, user]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

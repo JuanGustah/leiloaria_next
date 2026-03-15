@@ -1,5 +1,5 @@
 export const ADMIN_EMAIL = "admin@admin.com";
-export const USER__PATH = "/dashboard";
+export const USER__PATH = "/client/leiloes";
 export const ADMIN_PATH = "/admin/users";
 
 type RoleValue = string | null | undefined;

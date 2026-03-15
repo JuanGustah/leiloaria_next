@@ -1,4 +1,4 @@
-import { ItemRequest, UpdateItemRequest } from "@/lib/auctions/items";
+import { CondicaoItem, ItemRequest, UpdateItemRequest } from "@/lib/auctions/items";
 
 export enum StatusLeilao {
   ATIVO = "ATIVO",
@@ -69,7 +69,7 @@ export interface ItemFormData {
   idItem?: number;
   nome: string;
   descricao?: string;
-  condicao: string; 
+  condicao: CondicaoItem;
   imagens?: string[];
   categoriasId: number[];
 }

@@ -1,9 +1,8 @@
 export enum CondicaoItem {
   NOVO = "NOVO",
-  MUITO_BOM = "MUITO_BOM",
-  BOM = "BOM",
+  SEMI_NOVO = "SEMI_NOVO",
   USADO = "USADO",
-  PARA_REFORMA = "PARA_REFORMA",
+  AVARIADO = "AVARIADO",
 }
 
 export interface ItemRequest {

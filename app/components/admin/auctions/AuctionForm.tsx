@@ -23,6 +23,7 @@ export default function AuctionForm({
     prazoPagamento: "",
     lanceMinimo: "",
     descricao: "",
+    itens: [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -35,6 +36,7 @@ export default function AuctionForm({
         prazoPagamento: auction.prazoPagamento ? auction.prazoPagamento.replace("Z", "") : "",
         lanceMinimo: String(auction.lanceMinimo || ""),
         descricao: auction.descricao || "",
+        itens: [],
       });
     } else {
       setFormData({
@@ -44,6 +46,7 @@ export default function AuctionForm({
         prazoPagamento: "",
         lanceMinimo: "",
         descricao: "",
+        itens: [],
       });
     }
     setErrors({});

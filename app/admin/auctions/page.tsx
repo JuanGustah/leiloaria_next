@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { LeilaoResponse, LeilaoFormData } from "@/lib/auctions/types";
 import { AuctionForm, AuctionTable } from "@/app/components/admin/auctions";
+import { useUser } from "@/lib/context/UserContext";
 
 export default function AuctionsPage() {
+  const { user } = useUser();
   const [auctions, setAuctions] = useState<LeilaoResponse[]>([]);
   const [selectedAuction, setSelectedAuction] = useState<LeilaoResponse | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -46,6 +48,12 @@ export default function AuctionsPage() {
   const handleSubmit = async (data: LeilaoFormData) => {
     setIsSaving(true);
     try {
+      // Garantir que temos o userId do usuário autenticado
+      if (!user?.id) {
+        alert("Erro: Usuário não identificado");
+        return;
+      }
+
       let response;
       if (selectedAuction) {
         response = await fetch(`/api/admin/auctions/${selectedAuction.id}`, {
@@ -54,13 +62,13 @@ export default function AuctionsPage() {
           body: JSON.stringify(data),
         });
       } else {
-        // Para criar, precisa de idUsuario
+        // Para criar, passa idUsuario do contexto do usuário autenticado
         response = await fetch("/api/admin/auctions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...data,
-            idUsuario: 1, // Temporário - futuramente usar do contexto do usuario logado
+            idUsuario: user.id,
           }),
         });
       }
