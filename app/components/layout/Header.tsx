@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
+  
+  // Não renderiza o header em páginas de autenticação
+  if (pathname.startsWith("/auth")) {
+    return null;
+  }
+
   return (
     <header className="bg-white border-b border-[#F2F2F2] shadow-sm">
       <div className="px-6 py-4 flex items-center justify-between">

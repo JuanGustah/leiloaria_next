@@ -1,6 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 export default function Footer() {
+  const pathname = usePathname();
+  
+  // Não renderiza o footer em páginas de autenticação
+  if (pathname.startsWith("/auth")) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#F8F8FA] text-[#414059] py-8 border-t border-[#F2F2F2]">
       <div className="max-w-7xl mx-auto px-6">

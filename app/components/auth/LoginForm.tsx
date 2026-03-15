@@ -84,7 +84,9 @@ export default function LoginForm() {
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
-      router.push("/dashboard");
+      // Redirecionar sempre para a home, o middleware faz o resto
+      router.push("/");
+      setIsLoading(false);
     } catch (error) {
       setGeneralError(
         error instanceof Error ? error.message : "An error occurred"

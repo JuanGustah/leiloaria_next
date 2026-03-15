@@ -7,12 +7,11 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
-    { label: "Dashboard", href: "/admin/dashboard" },
     { label: "Usuários", href: "/admin/users" },
     { label: "Categorias", href: "/admin/categories" },
     { label: "Leilões", href: "/admin/auctions" },
-    { label: "Relatórios", href: "/admin/reports" },
-    { label: "Configurações", href: "/admin/settings" },
+    { label: "Lances", href: "/admin/lances" },
+    { label: "Vendas", href: "/admin/vendas" },
   ];
 
   return (
