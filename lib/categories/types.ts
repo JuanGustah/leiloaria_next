@@ -1,11 +1,9 @@
-// CategoriaResponse alinhado ao backend
+export interface CategoriaRequest {
+  nome: string;
+}
+
 export interface CategoriaResponse {
   id: number;
   nome: string;
-  subcategorias: CategoriaResponse[];
-}
-
-// CategoriaRequest alinhado ao backend
-export interface CategoriaRequest {
-  nome: string;
+  subcategorias?: CategoriaResponse[]; 
 }

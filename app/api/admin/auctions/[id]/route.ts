@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiPatch, apiDelete } from "@/lib/api";
+import { UpdateLeilaoRequest, LeilaoResponse } from "@/lib/auctions/types";
 
 export async function PATCH(
   request: NextRequest,
@@ -7,20 +8,16 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { nome, inicio, fim, prazoPagamento, lanceMinimo, descricao } = body;
+    const body: UpdateLeilaoRequest = await request.json();
 
-    const payload = {
-      nome,
-      inicio,
-      fim,
-      prazoPagamento,
-      lanceMinimo: lanceMinimo ? parseFloat(lanceMinimo) : undefined,
-      descricao,
-      itens: [],
-    };
+    if (body.nome && body.nome.length < 3) {
+      return NextResponse.json(
+        { message: "Nome deve ter pelo menos 3 caracteres" },
+        { status: 400 }
+      );
+    }
 
-    const response = await apiPatch(`/leiloes/${id}`, payload);
+    const response = await apiPatch<LeilaoResponse>(`/leiloes/${id}`, body);
 
     if (!response.ok) {
       return NextResponse.json(

@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiGet } from "@/lib/api";
+import { Usuario } from "@/lib/auth/types";
+
+interface UserPageResponse {
+  content: Usuario[];
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const response = await apiGet<{ content: any[] }>(`/users`);
+    const response = await apiGet<UserPageResponse>(`/users`);
 
     if (!response.ok) {
       return NextResponse.json(
@@ -12,10 +17,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const data = response.data;
-    // O backend retorna um Page<UserResponse>, extrai o content
-    const users = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : [];
-    
+    const data = response.data as UserPageResponse | Usuario[];
+    const users = Array.isArray((data as any)?.content)
+      ? (data as any).content
+      : Array.isArray(data)
+        ? data
+        : [];
+
     return NextResponse.json({ users });
   } catch (error) {
     console.error("Erro ao buscar usuários:", error);

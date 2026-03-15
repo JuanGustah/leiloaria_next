@@ -1,8 +1,7 @@
-// LanceResponse alinhado ao backend
 export interface LanceResponse {
   id: number;
-  timestamp: string; // ISO format LocalDateTime
-  valor: number; // BigDecimal
+  timestamp: string; 
+  valor: number; 
   lote?: {
     id: number;
     nome: string;
@@ -14,15 +13,13 @@ export interface LanceResponse {
   };
 }
 
-// LanceRequest alinhado ao backend
 export interface LanceRequest {
-  valor: number; // BigDecimal (positivo)
-  loteId: number; // Long (positivo)
-  usuarioId: number; // Long (positivo)
-  id?: number; // Adicionado para updates
+  valor: number; 
+  loteId: number; 
+  usuarioId: number;
+  id?: number; 
 }
 
-// LanceFormData para o formulário
 export interface LanceFormData {
   valor: string;
   loteId: string;

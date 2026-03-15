@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiGet } from "@/lib/api";
+import { LeilaoResponse } from "@/lib/auctions/types";
+
+interface LeilaoPageResponse {
+  content: LeilaoResponse[];
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const response = await apiGet<{ content: any[] }>(`/leiloes/meus`);
+    const response = await apiGet<LeilaoPageResponse>(`/leiloes/meus`);
 
     if (!response.ok) {
       return NextResponse.json({ message: "Erro ao buscar leilões" }, { status: response.status });
     }
 
-    const data = response.data;
-    // O backend retorna um Page<Leilao>, extrai o content
-    const auctions = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : [];
+    const data = response.data as LeilaoPageResponse | LeilaoResponse[];
+    const auctions = Array.isArray((data as any)?.content)
+      ? (data as any).content
+      : Array.isArray(data)
+        ? data
+        : [];
+
     return NextResponse.json({ auctions });
   } catch (error) {
     return NextResponse.json({ message: "Erro ao buscar leilões" }, { status: 500 });

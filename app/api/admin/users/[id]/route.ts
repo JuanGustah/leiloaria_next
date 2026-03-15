@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiPut, apiDelete } from "@/lib/api";
+import { UserRequest, Usuario } from "@/lib/auth/types";
 
 export async function PUT(
   request: NextRequest,
@@ -9,11 +10,10 @@ export async function PUT(
     const { id } = await params;
     console.log("[PUT /api/admin/users/:id] Iniciando atualização do usuário:", id);
 
-    const body = await request.json();
+    const body: UserRequest = await request.json();
     const { nome, email, cpf, dataNascimento, telefone } = body;
     console.log("[PUT /api/admin/users/:id] Dados recebidos:", { nome, email, cpf, dataNascimento, telefone });
 
-    // Validação básica
     if (!nome || !email || !cpf || !dataNascimento) {
       console.log("[PUT /api/admin/users/:id] Validação falhou - campos obrigatórios ausentes");
       return NextResponse.json(
@@ -22,8 +22,7 @@ export async function PUT(
       );
     }
 
-    // Prepara o payload para enviar ao backend
-    const userPayload = {
+    const userPayload: UserRequest = {
       nome,
       email,
       cpf,
@@ -35,7 +34,7 @@ export async function PUT(
     const url = `/users/${id}`;
     console.log("[PUT /api/admin/users/:id] Enviando requisição para:", url);
 
-    const response = await apiPut(url, userPayload);
+    const response = await apiPut<Usuario>(url, userPayload);
 
     console.log("[PUT /api/admin/users/:id] Resposta do backend - Status:", response.status);
 

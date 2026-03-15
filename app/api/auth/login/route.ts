@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { LoginDTO } from "@/lib/auth/types";
-import { decodeJwtPayload } from "@/lib/auth/jwt";
 
 export async function POST(request: NextRequest) {
   try {
     const body: LoginDTO = await request.json();
 
-    // Simple validation
     if (!body.email || !body.password) {
       return NextResponse.json(
         { message: "Email and password are required" },
@@ -15,7 +13,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Proxy request to Spring Boot backend
     const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8080"}/auth/login`, {
       method: "POST",
       headers: {

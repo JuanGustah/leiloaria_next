@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiPatch, apiDelete } from "@/lib/api";
+import { CategoriaRequest, CategoriaResponse } from "@/lib/categories/types";
 
 export async function PATCH(
   request: NextRequest,
@@ -7,15 +8,22 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const body = await request.json();
-    const { nome } = body;
-    if (!nome || nome.length < 3) {
-      return NextResponse.json({ message: "Nome deve ter pelo menos 3 caracteres" }, { status: 400 });
+    const body: Partial<CategoriaRequest> = await request.json();
+
+    if (body.nome && body.nome.length < 3) {
+      return NextResponse.json(
+        { message: "Nome deve ter pelo menos 3 caracteres" },
+        { status: 400 }
+      );
     }
-    const response = await apiPatch(`/categorias/${id}`, { nome });
+
+    const response = await apiPatch<CategoriaResponse>(`/categorias/${id}`, body);
 
     if (!response.ok) {
-      return NextResponse.json({ message: response.error?.message || "Erro ao atualizar categoria" }, { status: response.status });
+      return NextResponse.json(
+        { message: response.error?.message || "Erro ao atualizar categoria" },
+        { status: response.status }
+      );
     }
 
     return NextResponse.json(response.data);
@@ -33,7 +41,10 @@ export async function DELETE(
     const response = await apiDelete(`/categorias/${id}`);
 
     if (!response.ok) {
-      return NextResponse.json({ message: response.error?.message || "Erro ao excluir categoria" }, { status: response.status });
+      return NextResponse.json(
+        { message: response.error?.message || "Erro ao excluir categoria" },
+        { status: response.status }
+      );
     }
 
     return NextResponse.json({ message: "Categoria excluída com sucesso" });

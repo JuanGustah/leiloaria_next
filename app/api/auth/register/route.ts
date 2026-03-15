@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
 
-    // Se registro for bem-sucedido e houver token, salva em cookie HTTP Only
     if (response.ok && data.token) {
       const cookieStore = await cookies();
       cookieStore.set("token", data.token, {

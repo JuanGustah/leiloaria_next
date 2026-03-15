@@ -4,7 +4,6 @@ export const ADMIN_PATH = "/admin/users";
 
 type RoleValue = string | null | undefined;
 
-// Verifica se o scope contém ROLE_ADMIN
 export const isAdminByScope = (scope?: string | null): boolean => {
   if (!scope) return false;
   return scope.includes("ROLE_ADMIN");

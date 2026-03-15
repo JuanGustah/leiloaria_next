@@ -1,20 +1,48 @@
-// Enum de status do leilão
+import { ItemRequest, UpdateItemRequest } from "@/lib/auctions/items";
+
 export enum StatusLeilao {
   ATIVO = "ATIVO",
   ENCERRADO = "ENCERRADO",
   CANCELADO = "CANCELADO",
 }
 
-// Response do leilão - retornado pelo backend
+export interface LeilaoRequest {
+  nome: string;
+  inicio: string; 
+  fim: string;
+  prazoPagamento: string; 
+  lanceMinimo: number;
+  descricao?: string;
+  idUsuario: number; 
+  itens: ItemRequest[]; 
+}
+
+
+export interface UpdateLeilaoRequest {
+  nome?: string;
+  inicio?: string; 
+  fim?: string;
+  prazoPagamento?: string;
+  lanceMinimo?: number;
+  descricao?: string;
+  itens?: UpdateItemRequest[];
+}
+
+export interface UpdateLeilaoStatusRequest {
+  status: StatusLeilao;
+}
+
+
 export interface LeilaoResponse {
   id: number;
   status: StatusLeilao;
-  inicio: string; // ISO format
-  fim: string; // ISO format
-  prazoPagamento: string; // ISO format
+  inicio: string; 
+  fim: string; 
+  prazoPagamento: string;
   nome: string;
   lanceMinimo: number;
   descricao?: string;
+  idUsuario?: number;
   lote?: {
     id: number;
     nome: string;
@@ -22,20 +50,26 @@ export interface LeilaoResponse {
   itens?: Array<{
     id: number;
     nome: string;
+    descricao?: string;
+    condicao?: string;
   }>;
 }
 
-// Request para criar/atualizar leilão
 export interface LeilaoFormData {
   nome: string;
-  inicio: string; // YYYY-MM-DDTHH:mm
-  fim: string; // YYYY-MM-DDTHH:mm
-  prazoPagamento: string; // YYYY-MM-DDTHH:mm
-  lanceMinimo: string; // string para input numérico
+  inicio: string; 
+  fim: string; 
+  prazoPagamento: string; 
+  lanceMinimo: string; 
   descricao?: string;
+  itens: ItemFormData[]; 
 }
 
-// Request apenas para status
-export interface UpdateLeilaoStatusRequest {
-  status: StatusLeilao;
+export interface ItemFormData {
+  idItem?: number;
+  nome: string;
+  descricao?: string;
+  condicao: string; 
+  imagens?: string[];
+  categoriasId: number[];
 }
