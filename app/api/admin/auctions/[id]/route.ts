@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BACKEND_URL } from "@/lib/config";
-import { cookies } from "next/headers";
+import { apiPatch, apiDelete } from "@/lib/api";
 
 export async function PATCH(
   request: NextRequest,
@@ -8,11 +7,6 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
-    }
     const body = await request.json();
     const { nome, inicio, fim, prazoPagamento, lanceMinimo, descricao } = body;
 
@@ -26,25 +20,16 @@ export async function PATCH(
       itens: [],
     };
 
-    const response = await fetch(`${BACKEND_URL}/leiloes/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await apiPatch(`/leiloes/${id}`, payload);
 
     if (!response.ok) {
-      const errorData = await response.json();
       return NextResponse.json(
-        { message: errorData.message || "Erro ao atualizar leilão" },
+        { message: response.error?.message || "Erro ao atualizar leilão" },
         { status: response.status }
       );
     }
 
-    const updatedAuction = await response.json();
-    return NextResponse.json(updatedAuction);
+    return NextResponse.json(response.data);
   } catch (error) {
     return NextResponse.json({ message: "Erro ao atualizar leilão" }, { status: 500 });
   }
@@ -56,23 +41,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
-    }
 
-    const response = await fetch(`${BACKEND_URL}/leiloes/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await apiDelete(`/leiloes/${id}`);
 
     if (!response.ok) {
-      const errorData = await response.json();
       return NextResponse.json(
-        { message: errorData.message || "Erro ao excluir leilão" },
+        { message: response.error?.message || "Erro ao excluir leilão" },
         { status: response.status }
       );
     }

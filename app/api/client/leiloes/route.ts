@@ -9,8 +9,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Erro ao buscar leilões" }, { status: response.status });
     }
 
-    const data = response.data as { content: any[] } | any[];
-    const auctions = Array.isArray((data as any)?.content) ? (data as any).content : Array.isArray(data) ? data : [];
+    const data = response.data;
+    const auctions = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : [];
     return NextResponse.json({ auctions });
   } catch (error) {
     return NextResponse.json({ message: "Erro ao buscar leilões" }, { status: 500 });
@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nome, inicio, fim, prazoPagamento, lanceMinimo, descricao, idUsuario } = body;
+    const { nome, inicio, fim, prazoPagamento, lanceMinimo, descricao } = body;
 
-    if (!nome || !inicio || !fim || !prazoPagamento || !lanceMinimo || !idUsuario) {
+    if (!nome || !inicio || !fim || !prazoPagamento || !lanceMinimo) {
       return NextResponse.json(
         { message: "Campos obrigatórios faltando" },
         { status: 400 }
@@ -35,9 +35,7 @@ export async function POST(request: NextRequest) {
       fim,
       prazoPagamento,
       lanceMinimo: parseFloat(lanceMinimo),
-      descricao: descricao || "",
-      idUsuario,
-      itens: [],
+      descricao,
     };
 
     const response = await apiPost(`/leiloes`, payload);

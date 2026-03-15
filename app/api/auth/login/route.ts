@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { LoginDTO } from "@/lib/auth/types";
-import { BACKEND_URL } from "@/lib/config";
 import { decodeJwtPayload } from "@/lib/auth/jwt";
 
 export async function POST(request: NextRequest) {
@@ -17,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Proxy request to Spring Boot backend
-    const response = await fetch(`${BACKEND_URL}/auth/login`, {
+    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8080"}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

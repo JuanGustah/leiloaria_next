@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { BACKEND_URL } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get("authorization");
 
     // Proxy request to Spring Boot backend
-    const response = await fetch(`${BACKEND_URL}/api/auth/logout`, {
+    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8080"}/api/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

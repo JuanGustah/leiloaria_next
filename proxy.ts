@@ -27,9 +27,21 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  if (pathname.startsWith("/client") || pathname.startsWith("/api/client")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+  }
+
+  if (pathname.startsWith("/api/admin")) {
+    if (!token || !isAdminByScope(payload?.scope)) {
+      return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-   matcher: ["/", "/admin/:path*"],
+   matcher: ["/", "/admin/:path*", "/client/:path*", "/api/:path*"],
 };

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BACKEND_URL } from "@/lib/config";
-import { cookies } from "next/headers";
+import { apiPut, apiDelete } from "@/lib/api";
 
 export async function PUT(
   request: NextRequest,
@@ -9,18 +8,6 @@ export async function PUT(
   try {
     const { id } = await params;
     console.log("[PUT /api/admin/users/:id] Iniciando atualização do usuário:", id);
-
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
-
-    if (!token) {
-      console.log("[PUT /api/admin/users/:id] Token não encontrado");
-      return NextResponse.json(
-        { message: "Não autorizado" },
-        { status: 401 }
-      );
-    }
-    console.log("[PUT /api/admin/users/:id] Token obtido com sucesso");
 
     const body = await request.json();
     const { nome, email, cpf, dataNascimento, telefone } = body;
@@ -45,32 +32,23 @@ export async function PUT(
     };
     console.log("[PUT /api/admin/users/:id] Payload preparado:", userPayload);
 
-    const url = `${BACKEND_URL}/users/${id}`;
+    const url = `/users/${id}`;
     console.log("[PUT /api/admin/users/:id] Enviando requisição para:", url);
 
-    const response = await fetch(url, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userPayload),
-    });
+    const response = await apiPut(url, userPayload);
 
     console.log("[PUT /api/admin/users/:id] Resposta do backend - Status:", response.status);
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("[PUT /api/admin/users/:id] Erro do backend:", errorData);
+      console.error("[PUT /api/admin/users/:id] Erro do backend:", response.error);
       return NextResponse.json(
-        { message: errorData.message || "Erro ao atualizar usuário" },
+        { message: response.error?.message || "Erro ao atualizar usuário" },
         { status: response.status }
       );
     }
 
-    const updatedUser = await response.json();
-    console.log("[PUT /api/admin/users/:id] Usuário atualizado com sucesso:", updatedUser);
-    return NextResponse.json(updatedUser);
+    console.log("[PUT /api/admin/users/:id] Usuário atualizado com sucesso:", response.data);
+    return NextResponse.json(response.data);
   } catch (error) {
     console.error("[PUT /api/admin/users/:id] Erro:", error);
     return NextResponse.json(
@@ -86,27 +64,12 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value;
 
-    if (!token) {
-      return NextResponse.json(
-        { message: "Não autorizado" },
-        { status: 401 }
-      );
-    }
-
-    const response = await fetch(`${BACKEND_URL}/users/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await apiDelete(`/users/${id}`);
 
     if (!response.ok) {
-      const errorData = await response.json();
       return NextResponse.json(
-        { message: errorData.message || "Erro ao excluir usuário" },
+        { message: response.error?.message || "Erro ao excluir usuário" },
         { status: response.status }
       );
     }
