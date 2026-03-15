@@ -25,25 +25,25 @@ export default function RegisterForm() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = "Username is required";
+      newErrors.username = "Nome de usuário obrigatório";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = "E-mail obrigatório";
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = "Formato de e-mail inválido";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = "Senha obrigatória";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = "A senha deve ter pelo menos 8 caracteres";
     }
 
     if (!formData.passwordConfirm) {
-      newErrors.passwordConfirm = "Password confirmation is required";
+      newErrors.passwordConfirm = "Confirmação de senha obrigatória";
     } else if (formData.password !== formData.passwordConfirm) {
-      newErrors.passwordConfirm = "Passwords do not match";
+      newErrors.passwordConfirm = "As senhas não coincidem";
     }
 
     setErrors(newErrors);
@@ -87,7 +87,7 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setGeneralError(data.message || "Registration failed");
+        setGeneralError(data.message || "Falha no cadastro");
         setIsLoading(false);
         return;
       }
@@ -95,7 +95,7 @@ export default function RegisterForm() {
       router.push("/auth/login?registered=true");
     } catch (error) {
       setGeneralError(
-        error instanceof Error ? error.message : "An error occurred"
+        error instanceof Error ? error.message : "Ocorreu um erro"
       );
       setIsLoading(false);
     }
@@ -114,24 +114,24 @@ export default function RegisterForm() {
           htmlFor="username"
           className="block text-sm font-medium text-gray-700"
         >
-          Full Name
+          Nome de usuário
         </label>
         <input
-          id="name"
+          id="username"
           type="text"
           name="username"
           value={formData.username}
           onChange={handleChange}
-          placeholder="John Doe"
+          placeholder="João Silva"
           className={`mt-2 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-            errors.name
+            errors.username
               ? "border-[#F2A2A9] focus:ring-[#F2A2A9]"
               : "border-[#414059] focus:ring-[#635EF2]"
           }`}
           disabled={isLoading}
         />
-        {errors.name && (
-          <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+        {errors.username && (
+          <p className="mt-1 text-sm text-red-600">{errors.username}</p>
         )}
       </div>
 
@@ -140,7 +140,7 @@ export default function RegisterForm() {
           htmlFor="email"
           className="block text-sm font-medium text-gray-700"
         >
-          Email Address
+          E-mail
         </label>
         <input
           id="email"
@@ -148,7 +148,7 @@ export default function RegisterForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="you@example.com"
+          placeholder="seu@email.com"
           className={`mt-2 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
             errors.email
               ? "border-[#F2A2A9] focus:ring-[#F2A2A9]"
@@ -166,7 +166,7 @@ export default function RegisterForm() {
           htmlFor="password"
           className="block text-sm font-medium text-gray-700"
         >
-          Password
+          Senha
         </label>
         <input
           id="password"
@@ -186,7 +186,7 @@ export default function RegisterForm() {
           <p className="mt-1 text-sm text-red-600">{errors.password}</p>
         )}
         <p className="mt-1 text-xs text-gray-500">
-          Password must be at least 8 characters long
+          A senha deve ter pelo menos 8 caracteres
         </p>
       </div>
 
@@ -195,7 +195,7 @@ export default function RegisterForm() {
           htmlFor="passwordConfirm"
           className="block text-sm font-medium text-gray-700"
         >
-          Confirm Password
+          Confirmar senha
         </label>
         <input
           id="passwordConfirm"
@@ -221,16 +221,16 @@ export default function RegisterForm() {
           disabled={isLoading}
           className="w-full py-2 px-4 bg-[#635EF2] text-white font-medium rounded-lg hover:bg-[#F2A2A9] focus:outline-none focus:ring-2 focus:ring-[#635EF2] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-        {isLoading ? "Creating account..." : "Sign up"}
+        {isLoading ? "Criando conta..." : "Cadastrar"}
       </button>
 
       <p className="text-center text-sm text-gray-600">
-        Already have an account?{" "}
+        Já tem uma conta?{" "}
         <Link
           href="/auth/login"
           className="font-medium text-[#635EF2] hover:text-[#F2A2A9]"
         >
-          Sign in
+          Entrar
         </Link>
       </p>
     </form>
