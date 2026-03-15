@@ -1,30 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function POST(request: NextRequest) {
+interface LogoutResponse {
+  success: boolean;
+  message: string;
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse<LogoutResponse>> {
   try {
-    const authHeader = request.headers.get("authorization");
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
 
-    const response = await fetch(`${process.env.BACKEND_URL || "http://localhost:8080"}/api/auth/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(authHeader && { authorization: authHeader }),
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      const cookieStore = await cookies();
-      cookieStore.delete("token");
+    if (token) {
+      try {
+        await fetch(`${process.env.BACKEND_URL || "http://localhost:8080"}/api/auth/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (backendError) {
+        console.error("Logout error from backend:", backendError);
+      }
     }
 
-    return NextResponse.json(data, { status: response.status });
+    cookieStore.delete("token");
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Logout realizado com sucesso",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Logout error:", error);
     return NextResponse.json(
-      { message: "An error occurred during logout" },
+      {
+        success: false,
+        message: "Erro ao fazer logout",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse<LogoutResponse>> {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("token");
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Logout realizado com sucesso",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Logout GET error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Erro ao fazer logout",
+      },
       { status: 500 }
     );
   }
