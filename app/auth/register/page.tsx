@@ -4,8 +4,8 @@ import RegisterForm from "@/app/components/auth/RegisterForm";
 import Image from "next/image";
 
 export const metadata = {
-  title: "Sign Up",
-  description: "Create a new account",
+  title: "Cadastrar",
+  description: "Crie uma nova conta",
 };
 
 export default function RegisterPage() {
@@ -30,9 +30,9 @@ export default function RegisterPage() {
         <div className="relative w-full max-w-md z-20">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Criar conta</h1>
               <p className="mt-2 text-gray-600">
-                Join us and get started with our platform
+                Junte-se a nós e comece a usar a plataforma
               </p>
             </div>
             <RegisterForm />
