@@ -1,0 +1,122 @@
+"use client";
+
+import React from "react";
+import { LeilaoResponse, StatusLeilao } from "@/lib/auctions/types";
+
+interface AuctionTableProps {
+  auctions: LeilaoResponse[];
+  onEdit: (auction: LeilaoResponse) => void;
+  onDelete: (id: number) => void;
+  isLoading: boolean;
+}
+
+export default function AuctionTable({
+  auctions,
+  onEdit,
+  onDelete,
+  isLoading,
+}: AuctionTableProps) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <p className="text-[#414059]">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (auctions.length === 0) {
+    return (
+      <div className="flex justify-center py-8">
+        <p className="text-[#414059]">Nenhum leilão encontrado</p>
+      </div>
+    );
+  }
+
+  const formatDateTime = (dateStr: string) => {
+    try {
+      return new Date(dateStr).toLocaleString("pt-BR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "-";
+    }
+  };
+
+  const getStatusBadgeColor = (status: StatusLeilao) => {
+    switch (status) {
+      case StatusLeilao.ATIVO:
+        return "bg-[#E8F5E9] text-[#2E7D32]";
+      case StatusLeilao.ENCERRADO:
+        return "bg-[#F3E5F5] text-[#6A1B9A]";
+      case StatusLeilao.CANCELADO:
+        return "bg-[#FFEBEE] text-[#C62828]";
+      default:
+        return "bg-[#F2F2F2] text-[#414059]";
+    }
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr className="bg-[#F8F8FA] border-b border-[#F2F2F2]">
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">ID</th>
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">Nome</th>
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">Lance Mínimo</th>
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">Início</th>
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">Fim</th>
+            <th className="px-3 py-3 text-left font-semibold text-[#414059]">Status</th>
+            <th className="px-3 py-3 text-center font-semibold text-[#414059]">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {auctions.map((auction) => (
+            <tr
+              key={auction.id}
+              className="border-b border-[#F2F2F2] hover:bg-[#F8F8FA] transition"
+            >
+              <td className="px-3 py-3 text-[#414059]">{auction.id}</td>
+              <td className="px-3 py-3 text-[#414059] font-medium">{auction.nome}</td>
+              <td className="px-3 py-3 text-[#414059]">R$ {parseFloat(String(auction.lanceMinimo)).toFixed(2)}</td>
+              <td className="px-3 py-3 text-[#414059] text-xs">
+                {formatDateTime(auction.inicio)}
+              </td>
+              <td className="px-3 py-3 text-[#414059] text-xs">
+                {formatDateTime(auction.fim)}
+              </td>
+              <td className="px-3 py-3">
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                    auction.status
+                  )}`}
+                >
+                  {auction.status}
+                </span>
+              </td>
+              <td className="px-3 py-3 text-center space-x-2">
+                <button
+                  onClick={() => onEdit(auction)}
+                  className="px-3 py-1 text-sm bg-[#635EF2] text-white rounded-lg hover:bg-[#4F46E5] transition"
+                  title="Editar leilão"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => onDelete(auction.id)}
+                  className="px-3 py-1 text-sm bg-[#F2A2A9] text-white rounded-lg hover:bg-[#E88B95] transition"
+                  title="Excluir leilão"
+                >
+                  Excluir
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
