@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiPatch, apiDelete } from "@/lib/api";
+import { apiPatch, apiDelete, apiGet } from "@/lib/api";
 import { UpdateLeilaoRequest, LeilaoResponse } from "@/lib/auctions/types";
+import { Usuario } from "@/lib/auth/types";
 
 export async function PATCH(
   request: NextRequest,
@@ -39,7 +40,17 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const response = await apiDelete(`/leiloes/${id}`);
+    const meResponse = await apiGet<Usuario>(`/users/me`);
+    if (!meResponse.ok || !meResponse.data?.id) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: meResponse.status || 401 }
+      );
+    }
+
+    const response = await apiDelete(`/leiloes/${id}`, {
+      userId: meResponse.data.id,
+    });
 
     if (!response.ok) {
       return NextResponse.json(

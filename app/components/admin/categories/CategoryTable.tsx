@@ -6,6 +6,7 @@ import { CategoriaResponse } from "@/lib/categories/types";
 interface CategoryTableProps {
   categories: CategoriaResponse[];
   onEdit: (cat: CategoriaResponse) => void;
+  onAddSubcategory: (cat: CategoriaResponse) => void;
   onDelete: (id: number) => void;
   isLoading: boolean;
 }
@@ -13,6 +14,7 @@ interface CategoryTableProps {
 export default function CategoryTable({
   categories,
   onEdit,
+  onAddSubcategory,
   onDelete,
   isLoading,
 }: CategoryTableProps) {
@@ -64,6 +66,13 @@ export default function CategoryTable({
                   title="Editar categoria"
                 >
                   Editar
+                </button>
+                <button
+                  onClick={() => onAddSubcategory(cat)}
+                  className="px-3 py-1 text-sm bg-[#8B86C4] text-white rounded-lg hover:bg-[#7670B6] transition mr-2"
+                  title="Adicionar subcategoria"
+                >
+                  Subcategoria
                 </button>
                 <button
                   onClick={() => onDelete(cat.id)}

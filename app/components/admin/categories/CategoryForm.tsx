@@ -5,6 +5,7 @@ import { CategoriaRequest, CategoriaResponse } from "@/lib/categories/types";
 
 interface CategoryFormProps {
   category?: CategoriaResponse | null;
+  title?: string;
   onSubmit: (data: CategoriaRequest) => Promise<void>;
   onCancel: () => void;
   isLoading: boolean;
@@ -12,6 +13,7 @@ interface CategoryFormProps {
 
 export default function CategoryForm({
   category,
+  title,
   onSubmit,
   onCancel,
   isLoading,
@@ -37,7 +39,7 @@ export default function CategoryForm({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
         <h2 className="text-xl font-bold text-[#635EF2] mb-4">
-          {category ? "Editar Categoria" : "Nova Categoria"}
+          {title || (category ? "Editar Categoria" : "Nova Categoria")}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

@@ -5,14 +5,12 @@ import { LeilaoResponse, StatusLeilao } from "@/lib/auctions/types";
 
 interface AuctionTableProps {
   auctions: LeilaoResponse[];
-  onEdit: (auction: LeilaoResponse) => void;
   onDelete: (id: number) => void;
   isLoading: boolean;
 }
 
 export default function AuctionTable({
   auctions,
-  onEdit,
   onDelete,
   isLoading,
 }: AuctionTableProps) {
@@ -106,14 +104,7 @@ export default function AuctionTable({
                   {auction.status}
                 </span>
               </td>
-              <td className="px-3 py-3 text-center space-x-2">
-                <button
-                  onClick={() => onEdit(auction)}
-                  className="px-3 py-1 text-sm bg-[#635EF2] text-white rounded-lg hover:bg-[#4F46E5] transition"
-                  title="Editar leilão"
-                >
-                  Editar
-                </button>
+              <td className="px-3 py-3 text-center">
                 <button
                   onClick={() => onDelete(auction.id)}
                   className="px-3 py-1 text-sm bg-[#F2A2A9] text-white rounded-lg hover:bg-[#E88B95] transition"

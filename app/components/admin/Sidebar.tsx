@@ -10,8 +10,6 @@ export default function Sidebar() {
     { label: "Usuários", href: "/admin/users" },
     { label: "Categorias", href: "/admin/categories" },
     { label: "Leilões", href: "/admin/auctions" },
-    { label: "Lances", href: "/admin/lances" },
-    { label: "Vendas", href: "/admin/vendas" },
   ];
 
   return (

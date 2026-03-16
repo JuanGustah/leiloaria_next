@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiGet, apiPost } from "@/lib/api";
+import { Usuario } from "@/lib/auth/types";
 import { CategoriaRequest, CategoriaResponse } from "@/lib/categories/types";
 
 interface CategoriaPageResponse {
@@ -38,7 +39,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await apiPost<CategoriaResponse>(`/categorias`, body);
+    const meResponse = await apiGet<Usuario>(`/users/me`);
+    if (!meResponse.ok || !meResponse.data?.id) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: meResponse.status || 401 }
+      );
+    }
+
+    const response = await apiPost<CategoriaResponse>(`/categorias`, {
+      ...body,
+      userId: meResponse.data.id,
+    });
 
     if (!response.ok) {
       return NextResponse.json(
