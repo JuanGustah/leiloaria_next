@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LeilaoResponse } from "@/lib/auctions/types";
+import { LeilaoResponse, StatusLeilao } from "@/lib/auctions/types";
 import { useParams, useRouter } from "next/navigation";
 import { CondicaoItem } from "@/lib/auctions/items";
 import ItemList from "@/app/components/client/itens/itemList";
@@ -21,13 +21,30 @@ export default function LeiloesPage() {
   }, []);
 
   useEffect(() => {
-    if (leilao) {
+    if (leilao && leilao.status === StatusLeilao.ABERTO) {
       const interval = setInterval(() => {
         setTimeRemaining(calculateTimeRemaining());
       }, 1000);
       return () => clearInterval(interval);
     }
   }, [leilao]);
+
+  const getStatusBadgeColor = (status: StatusLeilao) => {
+    switch (status) {
+      case StatusLeilao.ABERTO:
+        return "text-[#2E7D32]";
+      case StatusLeilao.FINALIZADO:
+        return "text-[#6A1B9A]";
+      case StatusLeilao.CANCELADO:
+        return "text-[#C62828]";
+      case StatusLeilao.AGUARDANDO_PAGAMENTO:
+        return "text-[#F57F17]";
+      case StatusLeilao.PENDENTE:
+        return "text-[#1976D2]";
+      default:
+        return "text-[#414059]";
+    }
+  };
 
   const fetchLeilao = async () => {
     setIsLoading(true);
@@ -111,19 +128,6 @@ export default function LeiloesPage() {
   return (
 
     <div className="grid grid-cols-1 md:grid-cols-3 justify-between p-4 bg-white rounded shadow strength pt-8 min-h-screen">
-      {leilao?.lote?.itens && leilao?.lote?.itens?.length > 0 && (
-        <ItemList
-          items={
-            leilao?.lote?.itens?.map(item => ({
-              ...item,
-              condicao: item.condicao
-                ? (item.condicao as CondicaoItem)
-                : CondicaoItem.NOVO,
-            }))
-          }
-          isLoading={isLoading}
-        />
-      )}
       <div className="bg-white rounded-lg shadow-lg p-6 border border-[#F2F2F2] col-span-2">
         <h2 className="text-2xl font-bold text-[#635EF2] mb-6">{leilao?.lote?.nome}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ color: "#656565" }}>
@@ -157,16 +161,27 @@ export default function LeiloesPage() {
             </p>
           </div>
 
-
-          {/* Tempo Restante */}
+          {/* Status */}
           <div className="col-span-2">
             <label className="block text-sm font-medium text-[#414059] mb-2 ">
-              Tempo Restante:
+              Status:
             </label>
-            <p className="w-full px-3 py-2 border border-[#F2F2F2] rounded-lg focus:outline-none focus:border-[#635EF2] transition text-2xl font-bold text-[#635EF2] text-center">
-              {timeRemaining}
+            <p className={`w-full px-3 py-2 border border-[#F2F2F2] rounded-lg focus:outline-none focus:border-[#635EF2] transition text-2xl font-bold text-center ${getStatusBadgeColor(leilao?.status as StatusLeilao)}`} >
+              {leilao?.status || "N/A"}
             </p>
           </div>
+
+          {/* Tempo Restante */}
+          {leilao?.status === StatusLeilao.ABERTO && (
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-[#414059] mb-2 ">
+                Tempo Restante:
+              </label>
+              <p className="w-full px-3 py-2 border border-[#F2F2F2] rounded-lg focus:outline-none focus:border-[#635EF2] transition text-2xl font-bold text-[#635EF2] text-center">
+                {timeRemaining}
+              </p>
+            </div>
+          )}
 
 
           {/* Descrição */}
@@ -179,8 +194,27 @@ export default function LeiloesPage() {
             </p>
           </div>
         </div>
-        <LanceForm onSubmit={handleSubmit} onCancel={handleCloseForm} lanceMinimo={(lanceMinimo + 10)} loteId={leilao?.lote?.id || ""} isLoading={isSaving} />
+        {leilao?.status === StatusLeilao.ABERTO && (
+          <LanceForm onSubmit={handleSubmit} onCancel={handleCloseForm} lanceMinimo={(lanceMinimo + 10)} loteId={leilao?.lote?.id || ""} isLoading={isSaving} />
+        )}
       </div>
+
+      {leilao?.lote?.itens && leilao?.lote?.itens?.length > 0 && (
+        <div className="ml-6 col-span-1 text-center text-[#635EF2]">
+          <h2 className="text-2xl font-bold text-[#635EF2] mb-6">Itens</h2>
+          <ItemList
+            items={
+              leilao?.lote?.itens?.map(item => ({
+                ...item,
+                condicao: item.condicao
+                  ? (item.condicao as CondicaoItem)
+                  : CondicaoItem.NOVO,
+              }))
+            }
+            isLoading={isLoading}
+          />
+        </div>
+      )}
 
     </div>
   );

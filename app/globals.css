@@ -36,7 +36,15 @@ body {
 input {
   color: #656565;
 }
+
+select {
+  color: #656565;
+}
+
 textarea {
+  color: #656565;
+}
+option {
   color: #656565;
 }
 

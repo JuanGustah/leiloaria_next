@@ -22,7 +22,6 @@ export default function LeiloesPage() {
       const response = await fetch("/api/client/leiloes/meus-leiloes");
       if (response.ok) {
         const data = await response.json();
-        alert(JSON.stringify(data));
         const list = Array.isArray(data.auctions) ? data.auctions : [];
         setLeiloes(list);
       } else {
@@ -35,8 +34,8 @@ export default function LeiloesPage() {
     }
   };
 
-  const paticipar = (id: number) => {
-    router.push(`/client/leiloes/${id}`);
+  const editar = (id: number) => {
+    router.push(`/client/meus-leiloes/${id}`);
   }
 
   const handleCloseForm = () => {
@@ -81,7 +80,7 @@ export default function LeiloesPage() {
         <LeilaoForm onSubmit={handleSubmit} onCancel={handleCloseForm} isLoading={isSaving} />
       )}
 
-      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleParticipar={paticipar} />
+      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleClick={editar} fromOwner={true} />
     </div>
   );
 }

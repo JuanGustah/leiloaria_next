@@ -38,43 +38,13 @@ export default function LeiloesPage() {
     router.push(`/client/leiloes/${id}`);
   }
 
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-  };
-
-  const handleSubmit = async (data: LeilaoFormData) => {
-    setIsSaving(true);
-    try {
-      const response = await fetch("/api/client/leiloes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        handleCloseForm();
-        await fetchLeiloes();
-      } else {
-        const error = await response.json();
-        alert(error.message || "Erro ao criar leilão");
-      }
-    } catch (e) {
-      alert("Erro ao criar leilão");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-[#414059]">Todos os Leilões</h1>
       </div>
 
-      {isFormOpen && (
-        <LeilaoForm onSubmit={handleSubmit} onCancel={handleCloseForm} isLoading={isSaving} />
-      )}
-
-      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleParticipar={paticipar} />
+      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleClick={paticipar} />
     </div>
   );
 }

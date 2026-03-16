@@ -1,9 +1,11 @@
 import { CondicaoItem, ItemRequest, UpdateItemRequest } from "@/lib/auctions/items";
 
 export enum StatusLeilao {
-  ATIVO = "ATIVO",
-  ENCERRADO = "ENCERRADO",
+  ABERTO = "ABERTO",
+  FINALIZADO = "FINALIZADO",
   CANCELADO = "CANCELADO",
+  AGUARDANDO_PAGAMENTO = "AGUARDANDO_PAGAMENTO",
+  PENDENTE = "PENDENTE",
 }
 
 export interface LeilaoRequest {

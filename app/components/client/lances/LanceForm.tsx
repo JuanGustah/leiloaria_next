@@ -1,10 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { LeilaoFormData, ItemFormData, LeilaoResponse } from "@/lib/auctions/types";
-import { CondicaoItem } from "@/lib/auctions/items";
-import ItemForm from "../itens/ItemForm";
-import ItemFormList from "../itens/itemFormList";
 import { LanceFormData } from "@/lib/lances/types";
 
 interface LeilaoFormProps {

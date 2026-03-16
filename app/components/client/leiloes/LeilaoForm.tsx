@@ -13,6 +13,7 @@ interface LeilaoFormProps {
   isLoading: boolean;
   leilao?: LeilaoResponse;
   viewOnly?: boolean;
+  isEditing?: boolean;
 }
 
 export default function LeilaoForm({
@@ -21,6 +22,7 @@ export default function LeilaoForm({
   isLoading,
   leilao,
   viewOnly = false,
+  isEditing = false,
 }: LeilaoFormProps) {
   const [formData, setFormData] = useState<LeilaoFormData>({
     nome: "",
@@ -41,6 +43,7 @@ export default function LeilaoForm({
   });
 
   const [showItemForm, setShowItemForm] = useState(false);
+  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<string[]>([]);
 
   useEffect(() => {
     if (leilao) {
@@ -74,6 +77,10 @@ export default function LeilaoForm({
     }));
   };
 
+  const handleCategoriasChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const values = Array.from(e.target.selectedOptions).map(o => o.value);
+    setCategoriasSelecionadas(values);
+  };
 
   const handleAddItem = () => {
     setFormData((prev) => ({
@@ -107,7 +114,7 @@ export default function LeilaoForm({
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 border border-[#F2F2F2]">
-      <h2 className="text-2xl font-bold text-[#635EF2] mb-6">{viewOnly ? formData.nome : "Novo Leilão"}</h2>
+      <h2 className="text-2xl font-bold text-[#635EF2] mb-6">{viewOnly ? formData.nome : isEditing ? "Editar Leilão" : "Novo Leilão"}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Grid de campos principais - Inline */}
@@ -273,7 +280,7 @@ export default function LeilaoForm({
                 className="flex-1 px-4 py-2 bg-[#635EF2] text-white rounded-lg hover:bg-[#4A47B5] transition disabled:opacity-50 font-medium"
                 disabled={isLoading}
               >
-                {isLoading ? "Salvando..." : "Criar Leilão"}
+                {isLoading ? "Salvando..." : isEditing ? "Atualizar Leilão" : "Criar Leilão"}
               </button>
             </div>
           </>

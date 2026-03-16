@@ -46,12 +46,16 @@ export default function AuctionTable({
 
   const getStatusBadgeColor = (status: StatusLeilao) => {
     switch (status) {
-      case StatusLeilao.ATIVO:
+      case StatusLeilao.ABERTO:
         return "bg-[#E8F5E9] text-[#2E7D32]";
-      case StatusLeilao.ENCERRADO:
+      case StatusLeilao.FINALIZADO:
         return "bg-[#F3E5F5] text-[#6A1B9A]";
       case StatusLeilao.CANCELADO:
         return "bg-[#FFEBEE] text-[#C62828]";
+      case StatusLeilao.AGUARDANDO_PAGAMENTO:
+        return "bg-[#FFF8E1] text-[#F57F17]";
+      case StatusLeilao.PENDENTE:
+        return "bg-[#E3F2FD] text-[#1976D2]";
       default:
         return "bg-[#F2F2F2] text-[#414059]";
     }
