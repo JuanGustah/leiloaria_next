@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { LeilaoResponse, LeilaoFormData } from "@/lib/auctions/types";
 import { LeilaoForm, LeilaoList } from "@/app/components/client/leiloes";
+import { useRouter } from 'next/navigation';
 
-export default function MeusLeiloesPage() {
+export default function LeiloesPage() {
+  const router = useRouter();
   const [leiloes, setLeiloes] = useState<LeilaoResponse[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,9 +19,10 @@ export default function MeusLeiloesPage() {
   const fetchLeiloes = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/client/meus-leiloes");
+      const response = await fetch("/api/client/leiloes/meus-leiloes");
       if (response.ok) {
         const data = await response.json();
+        alert(JSON.stringify(data));
         const list = Array.isArray(data.auctions) ? data.auctions : [];
         setLeiloes(list);
       } else {
@@ -32,6 +35,10 @@ export default function MeusLeiloesPage() {
     }
   };
 
+  const paticipar = (id: number) => {
+    router.push(`/client/leiloes/${id}`);
+  }
+
   const handleCloseForm = () => {
     setIsFormOpen(false);
   };
@@ -42,14 +49,7 @@ export default function MeusLeiloesPage() {
       const response = await fetch("/api/client/leiloes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          // idUsuario é resolvido automaticamente pelo token no servidor
-          // Converter lanceMinimo para número se for string
-          lanceMinimo: typeof data.lanceMinimo === "string" 
-            ? parseFloat(data.lanceMinimo) 
-            : data.lanceMinimo,
-        }),
+        body: JSON.stringify(data),
       });
       if (response.ok) {
         handleCloseForm();
@@ -81,7 +81,7 @@ export default function MeusLeiloesPage() {
         <LeilaoForm onSubmit={handleSubmit} onCancel={handleCloseForm} isLoading={isSaving} />
       )}
 
-      <LeilaoList leiloes={leiloes} isLoading={isLoading} />
+      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleParticipar={paticipar} />
     </div>
   );
 }

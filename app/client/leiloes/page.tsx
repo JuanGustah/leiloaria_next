@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { LeilaoResponse, LeilaoFormData } from "@/lib/auctions/types";
 import { LeilaoForm, LeilaoList } from "@/app/components/client/leiloes";
+import { useRouter } from 'next/navigation';
 
 export default function LeiloesPage() {
+  const router = useRouter();
   const [leiloes, setLeiloes] = useState<LeilaoResponse[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +33,10 @@ export default function LeiloesPage() {
       setIsLoading(false);
     }
   };
+
+  const paticipar = (id: number) => {
+    router.push(`/client/leiloes/${id}`);
+  }
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
@@ -62,19 +68,13 @@ export default function LeiloesPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-[#414059]">Todos os Leilões</h1>
-        <button
-          onClick={() => setIsFormOpen(true)}
-          className="px-4 py-2 bg-[#635EF2] text-white rounded-lg hover:bg-[#4A47B5] transition font-medium"
-        >
-          + Novo Leilão
-        </button>
       </div>
 
       {isFormOpen && (
         <LeilaoForm onSubmit={handleSubmit} onCancel={handleCloseForm} isLoading={isSaving} />
       )}
 
-      <LeilaoList leiloes={leiloes} isLoading={isLoading} />
+      <LeilaoList leiloes={leiloes} isLoading={isLoading} handleParticipar={paticipar} />
     </div>
   );
 }

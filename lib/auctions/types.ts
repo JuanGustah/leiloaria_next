@@ -39,20 +39,41 @@ export interface LeilaoResponse {
   inicio: string; 
   fim: string; 
   prazoPagamento: string;
+  lote?: LoteResponse;
+}
+
+export interface LoteResponse {
+  id: number;
   nome: string;
-  lanceMinimo: number;
   descricao?: string;
-  idUsuario?: number;
-  lote?: {
-    id: number;
-    nome: string;
-  };
-  itens?: Array<{
-    id: number;
-    nome: string;
-    descricao?: string;
-    condicao?: string;
-  }>;
+  lanceMinimo?: number;
+  itens: ItemResponse[];
+  lances?: LanceResponse[];
+}
+
+export interface LanceResponse {
+  id: number;
+  timestamp: string;
+  valor: number;
+  loteId: number;
+  usuarioId: number;
+  vendaId?: number;
+}
+
+export interface ItemResponse {
+  id: number;
+  nome: string;
+  descricao?: string;
+  condicao?: string;
+  imagens?: string[];
+  categorias?: CategoriaResponse[];
+}
+
+export interface CategoriaResponse {
+  id: number;
+  nome: string;
+  descricao?: string;
+  subcategorias?: CategoriaResponse[];
 }
 
 export interface LeilaoFormData {

@@ -21,7 +21,6 @@ export interface LanceRequest {
 }
 
 export interface LanceFormData {
-  valor: string;
+  valor: number;
   loteId: string;
-  usuarioId: string;
 }

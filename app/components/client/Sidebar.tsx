@@ -34,7 +34,7 @@ export default function ClientSidebar() {
       )}
 
       <aside
-        className={`fixed md:static top-0 left-0 h-screen bg-white border-r border-[#F2F2F2] transition-all duration-300 z-40 ${
+        className={`fixed md:static top-0 left-0 h-screen bg-white border-r border-[#F2F2F2] transition-all duration-300 z-40 min-h-screen ${
           isOpen ? "w-64" : "w-16"
         } overflow-hidden`}
       >
