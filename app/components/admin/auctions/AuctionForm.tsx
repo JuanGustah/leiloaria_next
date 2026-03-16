@@ -30,12 +30,12 @@ export default function AuctionForm({
   useEffect(() => {
     if (auction) {
       setFormData({
-        nome: auction.nome || "",
+        nome: auction?.lote?.nome || "",
         inicio: auction.inicio ? auction.inicio.replace("Z", "") : "",
         fim: auction.fim ? auction.fim.replace("Z", "") : "",
         prazoPagamento: auction.prazoPagamento ? auction.prazoPagamento.replace("Z", "") : "",
-        lanceMinimo: String(auction.lanceMinimo || ""),
-        descricao: auction.descricao || "",
+        lanceMinimo: String(auction?.lote?.lanceMinimo || ""),
+        descricao: auction?.lote?.descricao || "",
         itens: [],
       });
     } else {

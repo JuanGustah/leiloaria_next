@@ -87,8 +87,8 @@ export default function AuctionTable({
               className="border-b border-[#F2F2F2] hover:bg-[#F8F8FA] transition"
             >
               <td className="px-3 py-3 text-[#414059]">{auction.id}</td>
-              <td className="px-3 py-3 text-[#414059] font-medium">{auction.nome}</td>
-              <td className="px-3 py-3 text-[#414059]">R$ {formatCurrency(auction.lanceMinimo)}</td>
+              <td className="px-3 py-3 text-[#414059] font-medium">{auction?.lote?.nome}</td>
+              <td className="px-3 py-3 text-[#414059]">R$ {formatCurrency(auction?.lote?.lanceMinimo)}</td>
               <td className="px-3 py-3 text-[#414059] text-xs">
                 {formatDateTime(auction.inicio)}
               </td>
