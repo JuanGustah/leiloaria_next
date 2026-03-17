@@ -14,7 +14,8 @@ interface ApiResponse<T> {
 
 async function apiCall<T>(
   url: string,
-  options: ApiRequestOptions = {}
+  options: ApiRequestOptions = {},
+  external?: boolean
 ): Promise<ApiResponse<T>> {
   try {
     const token = await getAuthToken();
@@ -24,7 +25,7 @@ async function apiCall<T>(
       ...options.headers,
     });
 
-    if (token) {
+    if (token && !external) {
       headers.set("Authorization", `Bearer ${token}`);
     }
 
@@ -80,7 +81,9 @@ export async function apiDelete<T>(
 
 export async function apiPut<T>(
   url: string,
-  body: any
+  body: any,
+  headers?: any,
+  external?: boolean
 ): Promise<ApiResponse<T>> {
-  return apiCall<T>(url, { method: "PUT", body });
+  return apiCall<T>(url, { method: "PUT", body, headers }, external);
 }

@@ -13,6 +13,7 @@ export default function ClientSidebar() {
   const menuItems = [
     { label: "Todos os Leilões", href: "/client/leiloes" },
     { label: "Meus Leilões", href: "/client/meus-leiloes" },
+    { label: "Meus Lances", href: "/client/meus-lances"}
   ];
 
   return (
