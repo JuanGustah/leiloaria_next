@@ -5,7 +5,6 @@ import { LanceFormData } from "@/lib/lances/types";
 
 interface LeilaoFormProps {
     onSubmit?: (data: LanceFormData) => Promise<void>;
-    onCancel: () => void;
     lanceMinimo: number;
     loteId?: number | string;
     isLoading: boolean;
@@ -13,7 +12,6 @@ interface LeilaoFormProps {
 
 export default function LanceForm({
     onSubmit,
-    onCancel,
     lanceMinimo,
     loteId,
     isLoading
