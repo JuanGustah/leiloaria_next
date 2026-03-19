@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LeilaoResponse } from "@/lib/auctions/types";
+import { LeilaoFormData, LeilaoResponse } from "@/lib/auctions/types";
 import { useParams, useRouter } from "next/navigation";
-import { LanceFormData } from "@/lib/lances/types";
-import LeilaoView from "@/app/components/client/leiloes/leilaoView";
+import { LeilaoForm } from "@/app/components/client/leiloes";
 
 export default function LeilaoPage() {
   const { id } = useParams();
@@ -53,33 +52,32 @@ export default function LeilaoPage() {
     router.push("/client/leiloes");
   };
 
-  const handleSubmitLance = async (data: LanceFormData) => {
-    setIsSaving(true);
-    try {
-      const response = await fetch("/api/client/lances", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        alert("Lance criado com sucesso");
-        await fetchLeilao();
-      } else {
-        const error = await response.json();
-        alert(error.message || "Erro ao criar lance");
+  const handleSubmit = async (data: LeilaoFormData) => {
+      setIsSaving(true);
+      try {
+        const response = await fetch(`/api/client/leiloes/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (response.ok) {
+          setLeilao(await response.json());
+        } else {
+          const error = await response.json();
+          alert(error.message || "Erro ao criar leilão");
+        }
+      } catch (e) {
+        alert("Erro ao criar leilão");
+      } finally {
+        setIsSaving(false);
       }
-    } catch (e) {
-      alert("Erro ao criar leilão");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    };
 
   if (!leilao) {
     return <div>Carregando...</div>;
   }
 
   return (
-    <LeilaoView onSubmitLance={handleSubmitLance} isLoading={isSaving} leilao={leilao}/>
+    <LeilaoForm onCancel={handleCloseForm} isLoading={isLoading} isEditing={true} leilao={leilao} onSubmit={handleSubmit} />
   );
 }

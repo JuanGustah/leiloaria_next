@@ -6,9 +6,10 @@ interface LanceListProps {
   cancelandoId: number | null;
   finalizarPagamento: (id: number) => void;
   encerrarLeilao: (id: number) => void;
+  visualizarLeilao: (id: number) => void
 }
 
-export default function LanceList({ lances, isLoading, cancelandoId,encerrarLeilao, finalizarPagamento }: LanceListProps) {
+export default function LanceList({ lances, isLoading, cancelandoId, encerrarLeilao, finalizarPagamento, visualizarLeilao }: LanceListProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -134,27 +135,32 @@ export default function LanceList({ lances, isLoading, cancelandoId,encerrarLeil
           {/* Ações */}
           {
             lance.lote.status === StatusLeilao.ABERTO ?
-             <button
+              <button
                 onClick={() => encerrarLeilao(lance.id)}
                 className="w-full px-3 py-2 text-sm bg-[#635EF2] text-white rounded hover:bg-[#4A47B5] transition cursor-pointer">
                 {cancelandoId === lance.id ? (
-                    "Carregando..." 
+                  "Carregando..."
                 ) : (
-                    "Cancelar"
+                  "Cancelar"
                 )}
-            </button>:
-            <button
+              </button> :
+              <button
                 onClick={() => finalizarPagamento(lance.venda?.id!)}
                 className={
-                    `w-full px-3 py-2 text-sm rounded transition ${
-                        lance.venda && !lance.venda.metodoPagamento ? "bg-[#635EF2] hover:bg-[#4A47B5] text-white cursor-pointer" : "bg-[#b6c1ef] text-white cursor-not-allowed"
-                    }`
+                  `w-full px-3 py-2 text-sm rounded transition ${lance.venda && !lance.venda.metodoPagamento ? "bg-[#635EF2] hover:bg-[#4A47B5] text-white cursor-pointer" : "bg-[#b6c1ef] text-white cursor-not-allowed"
+                  }`
                 }
-                disabled= { lance.venda && !lance.venda.metodoPagamento ? false: true }
-            >
-                {!lance.venda ?  "Lance não ganhador": !lance.venda.metodoPagamento ? "Finalizar Pagamento": lance.venda.metodoPagamento.status === "PAID" ? "Lance ganhador": "Lance não ganhador"}
-            </button>
+                disabled={lance.venda && !lance.venda.metodoPagamento ? false : true}
+              >
+                {!lance.venda ? "Lance não ganhador" : !lance.venda.metodoPagamento ? "Finalizar Pagamento" : lance.venda.metodoPagamento.status === "PAID" ? "Lance ganhador" : "Lance não ganhador"}
+              </button>
+
           }
+          <button
+            onClick={() => visualizarLeilao(lance.leilao.id)}
+            className="w-full px-3 py-2 text-sm bg-[#635EF2] text-white rounded hover:bg-[#4A47B5] transition mt-2">
+            Ver detalhes
+          </button>
         </div>
       ))}
     </div>

@@ -14,7 +14,6 @@ export default function ClientSidebar() {
     { label: "Todos os Leilões", href: "/client/leiloes" },
     { label: "Meus Leilões", href: "/client/meus-leiloes" },
     { label: "Meus Lances", href: "/client/meus-lances"}
-    { label: "Minhas Participações", href: "/client/minhas-participacoes" },
   ];
 
   return (
@@ -36,7 +35,7 @@ export default function ClientSidebar() {
       )}
 
       <aside
-        className={`fixed md:static top-0 left-0 h-screen bg-white border-r border-[#F2F2F2] transition-all duration-300 z-40 min-h-screen ${
+        className={`fixed md:static top-0 left-0  bg-white border-r border-[#F2F2F2] transition-all duration-300 z-40 min-h-screen ${
           isOpen ? "w-64" : "w-16"
         } overflow-hidden`}
       >

@@ -71,6 +71,7 @@ export interface MeusLancesResponse{
   valor: number;
   usuarioId: number;
   venda?: VendaResponse;
+  leilao: LeilaoResponse;
   lote: {
     id: number;
     nome: string;

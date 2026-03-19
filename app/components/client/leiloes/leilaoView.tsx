@@ -10,6 +10,7 @@ import { LanceFormData } from "@/lib/lances/types";
 import { User } from "@/lib/auth";
 import AvaliacaoList from "../avaliacoes/avaliacaoList";
 import AvaliacaoForm from "../avaliacoes/avaliacaoForm";
+import Image from "next/image";
 
 interface LeilaoViewProps {
     onSubmitLance?: (data: LanceFormData) => Promise<void>;
@@ -53,6 +54,10 @@ export default function LeilaoView({
             setAvaliacoes([]);
         }
     };
+
+    const formatTelefone = (telefone: string): string => {
+        return `(${telefone.slice(0, 2)}) ${telefone.slice(2, 7)}-${telefone.slice(7, 12)}`
+    }
 
     useEffect(() => {
         if (leilao) {
@@ -268,6 +273,42 @@ export default function LeilaoView({
                                 {leilao?.lote?.descricao || "N/A"}
                             </p>
                         </div>
+                        {leilao.proprietario && (
+                            <div className="col-span-2">
+                                <label className="block text-sm font-medium text-[#414059] mb-2">
+                                    Vendedor:
+                                </label>
+                                <div className="w-full px-3 py-4 border border-[#F2F2F2] rounded-lg focus:outline-none focus:border-[#635EF2] transition">
+                                    <div className="bg-white px-3 flex items-center">
+                                        <Image
+                                            src={"/avatar.png"}
+                                            alt={leilao.proprietario.nome}
+                                            width={400}
+                                            height={300}
+                                            className="h-12 w-12 rounded-full border-2 border-gray-600"
+                                        />
+                                        <div className="ml-4 flex-1 py-4">
+                                            <div className="flex items-bottom justify-between mb-1">
+                                                <p className="text-grey-darkest">
+                                                    {leilao.proprietario.nome}
+                                                </p>
+                                            </div>
+                                            <hr></hr>
+                                            <div className="text-grey-dark mt-1 text-sm">
+                                                <p>
+                                                    Email: {leilao.proprietario.email}
+                                                </p>
+                                                <p>
+                                                    {leilao.proprietario.telefone.map((telefone, index) => (
+                                                        <p>Telefone {index + 1}: {formatTelefone(telefone)}</p>
+                                                    ))}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     {leilao?.status === StatusLeilao.ABERTO && !isOwner && (
                         <LanceForm onSubmit={onSubmitLance} lanceMinimo={(lanceMinimo + 10)} loteId={leilao?.lote?.id || ""} isLoading={isLoading} />

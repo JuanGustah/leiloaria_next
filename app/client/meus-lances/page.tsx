@@ -32,7 +32,7 @@ export default function LancesPage() {
     const encerrarLeilao = async (id: number) => {
         try {
             setCancelandoId(id);
-            
+
             const response = await fetch(`/api/client/lances/meus-lances/${id}`, {
                 method: "DELETE",
             });
@@ -44,7 +44,7 @@ export default function LancesPage() {
             setLances((prev) => prev.filter((l) => l.id !== id));
         } catch (error) {
             alert("Não foi possível cancelar o lance.");
-        }finally{
+        } finally {
             setCancelandoId(null);
         }
     };
@@ -53,22 +53,27 @@ export default function LancesPage() {
         router.push(`/client/pagamento/${id}`);
     }
 
+    const view = (id: number) => {
+        router.push(`/client/meus-lances/${id}`);
+    }
+
     useEffect(() => {
         fetchLances();
-      }, []);
+    }, []);
 
     return (
         <div>
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-[#414059]">Meus Lances</h1>
-          </div>
-    
-          <LanceList 
-          lances={lances} 
-          isLoading={isLoading}
-          cancelandoId={cancelandoId}
-           encerrarLeilao={encerrarLeilao}
-           finalizarPagamento= {finalizarPagamento}/>
+            <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-[#414059]">Meus Lances</h1>
+            </div>
+
+            <LanceList
+                lances={lances}
+                isLoading={isLoading}
+                cancelandoId={cancelandoId}
+                encerrarLeilao={encerrarLeilao}
+                finalizarPagamento={finalizarPagamento}
+                visualizarLeilao={view} />
         </div>
-      );
+    );
 }
