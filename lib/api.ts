@@ -46,6 +46,7 @@ async function apiCall<T>(
       error: !response.ok ? data : undefined,
     };
   } catch (error) {
+    console.error("API Error:", error);
     return {
       ok: false,
       status: 500,
