@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { apiGet, apiPatch } from "@/lib/api";
+import { apiGet, apiPatch, apiDelete } from "@/lib/api";
 import { LeilaoResponse, UpdateLeilaoRequest } from "@/lib/auctions/types";
-import { getAuthToken } from "@/lib/auth/getToken";
 import { Usuario } from "@/lib/auth";
+import { CancelarLeilaoRequest } from "@/lib/auctions/types"; 
 
 type RouteContext = {
   params: Promise<{ id: string }>;
+};
+
+const recoverAuthUser = async (): Promise<Usuario | null> => {
+  try {
+    const meResponse = await apiGet<Usuario>(`/users/me`);
+    if (!meResponse.ok || !meResponse.data?.id) {
+      console.log("[client/leiloes][PATCH] Falha ao resolver usuário via /users/me:", meResponse.error);
+      return null;
+    }
+    return meResponse.data;
+  } catch (e) {
+    console.error("Erro ao recuperar usuário autenticado:", e);
+    return null;
+  }
 };
 
 export async function GET(
@@ -50,34 +64,15 @@ export async function PATCH(
     const { id } = await params;
     const body: any = await _request.json();
 
-    console.log("[client/leiloes][PATCH] Iniciando criação de leilão");
-    console.log("[client/leiloes][PATCH] Campos recebidos:", Object.keys(body || {}));
-
-    const token = await getAuthToken();
-    const tokenPreview = token ? `${token.slice(0, 12)}...${token.slice(-8)}` : "ausente";
-    console.log("[client/leiloes][PATCH] Token disponível no BFF:", token ? "sim" : "não", "preview:", tokenPreview);
-    console.log("[client/leiloes][PATCH] Resolvendo usuário autenticado via GET /users/me (sem body, somente Authorization via api.ts)");
-
-    const meResponse = await apiGet<Usuario>(`/users/me`);
-    console.log("[client/leiloes][PATCH] ResPATCHa de /users/me:", {
-      ok: meResponse.ok,
-      status: meResponse.status,
-      hasData: Boolean(meResponse.data),
-      hasError: Boolean(meResponse.error),
-    });
-    if (!meResponse.ok || !meResponse.data?.id) {
-      console.log("[client/leiloes][PATCH] Falha ao resolver usuário via /users/me:", meResponse.error);
+    const authUser = await recoverAuthUser();
+    if (!authUser) {
       return NextResponse.json(
         { message: "Usuário não autenticado" },
-        { status: meResponse.status || 401 }
+        { status: 401 }
       );
     }
-    const idUsuario = meResponse.data.id;
-    console.log("[client/leiloes][PATCH] Usuário resolvido:", {
-      id: meResponse.data.id,
-      email: meResponse.data.email,
-      nome: meResponse.data.nome,
-    });
+
+    const idUsuario = authUser.id;
 
     const missingFields: string[] = [];
     if (!body.nome) missingFields.push("nome");
@@ -130,12 +125,6 @@ export async function PATCH(
     };
 
     const response = await apiPatch<LeilaoResponse>(`/leiloes${id}`, leilaoData);
-    console.log("[client/leiloes][PATCH] ResPATCHa criação leilão:", {
-      ok: response.ok,
-      status: response.status,
-      hasData: Boolean(response.data),
-      hasError: Boolean(response.error),
-    });
 
     if (!response.ok) {
       return NextResponse.json(
@@ -150,3 +139,52 @@ export async function PATCH(
     return NextResponse.json({ message: "Erro ao atualizar leilão" }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteContext) {
+  try {
+
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID do leilão é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    const authUser = await recoverAuthUser();
+    if (!authUser) {
+      return NextResponse.json(
+        { message: "Usuário não autenticado" },
+        { status: 401 }
+      );
+    }
+
+    const idUsuario = authUser.id;
+
+    
+    const cancelamento: CancelarLeilaoRequest = {
+      userId: idUsuario
+    };
+
+    const response = await apiDelete<LeilaoResponse>(`/leiloes/${id}`, cancelamento);
+
+    if (!response.ok) {
+      console.error("Erro ao cancelar leilão:", response.error);
+      return NextResponse.json(
+        { message: response.error?.message || "Erro ao cancelar leilão" },
+        { status: response.status }
+      );
+    } else {
+      console.log("Leilão cancelado com sucesso:", response.data);
+    }
+
+    return NextResponse.json(response.data, { status: 200 });
+  } catch (error) {
+    console.error("Erro ao cancelar leilão:", error);
+    return NextResponse.json({ message: "Erro ao cancelar leilão" }, { status: 500 });
+  }
+}
+

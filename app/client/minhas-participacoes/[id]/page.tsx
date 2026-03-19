@@ -5,37 +5,19 @@ import { LeilaoResponse } from "@/lib/auctions/types";
 import { useParams, useRouter } from "next/navigation";
 import { LanceFormData } from "@/lib/lances/types";
 import LeilaoView from "@/app/components/client/leiloes/leilaoView";
-import { Usuario } from "@/lib/auth";
 
 export default function LeilaoPage() {
   const { id } = useParams();
   const [leilao, setLeilao] = useState<LeilaoResponse | undefined>(undefined);
-  const [authUser, setAuthUser] = useState<Usuario | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
     fetchLeilao();
-    fetchUser();
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const response = await fetch("/api/auth/me");
-      if (response.ok) {
-        const data = await response.json();
-        setAuthUser(data as Usuario);
-      } else {
-        setAuthUser(null);
-      }
-    } catch (e) {
-      setAuthUser(null);
-    }
-  }
-
   const fetchLeilao = async () => {
-    setIsLoading(true);
     try {
       const response = await fetch(`/api/client/leiloes/${id}`);
       if (response.ok) {
@@ -60,11 +42,9 @@ export default function LeilaoPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchLeilao();
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  
 
   const handleCloseForm = () => {
     router.push("/client/leiloes");
@@ -97,6 +77,6 @@ export default function LeilaoPage() {
   }
 
   return (
-    <LeilaoView onSubmitLance={handleSubmitLance} isLoading={isSaving} leilao={leilao}/>
+    <LeilaoView onSubmitLance={handleSubmitLance} isLoading={isSaving} leilao={leilao} />
   );
 }

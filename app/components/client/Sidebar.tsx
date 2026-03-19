@@ -14,6 +14,7 @@ export default function ClientSidebar() {
     { label: "Todos os Leilões", href: "/client/leiloes" },
     { label: "Meus Leilões", href: "/client/meus-leiloes" },
     { label: "Meus Lances", href: "/client/meus-lances"}
+    { label: "Minhas Participações", href: "/client/minhas-participacoes" },
   ];
 
   return (

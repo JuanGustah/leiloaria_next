@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LeilaoFormData, LeilaoResponse } from "@/lib/auctions/types";
+import { LeilaoResponse } from "@/lib/auctions/types";
 import { useParams, useRouter } from "next/navigation";
-import { LeilaoForm } from "@/app/components/client/leiloes";
+import { LanceFormData } from "@/lib/lances/types";
+import LeilaoView from "@/app/components/client/leiloes/leilaoView";
 
-export default function LeiloesPage() {
+export default function LeilaoPage() {
   const { id } = useParams();
   const [leilao, setLeilao] = useState<LeilaoResponse | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
   const router = useRouter();
   useEffect(() => {
     fetchLeilao();
-  }, []);
+  }, [id]);
 
   const fetchLeilao = async () => {
     setIsLoading(true);
@@ -22,10 +24,6 @@ export default function LeiloesPage() {
       if (response.ok) {
         const data = await response.json();
         setLeilao(data);
-        let lances = data.lote?.lances || [];
-        let maiorLance = lances.reduce((max: number, lance: any) => {
-          return lance.valor > max ? lance.valor : max;
-        }, 0);
       } else {
         if (response.status === 404) {
           alert("Leilão não encontrado");
@@ -42,23 +40,33 @@ export default function LeiloesPage() {
     }
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchLeilao();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  
+
   const handleCloseForm = () => {
     router.push("/client/leiloes");
   };
 
-  const handleSubmit = async (data: LeilaoFormData) => {
+  const handleSubmitLance = async (data: LanceFormData) => {
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/client/leiloes/${id}`, {
-        method: "PATCH",
+      const response = await fetch("/api/client/lances", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        await handleCloseForm();
+        alert("Lance criado com sucesso");
+        await fetchLeilao();
       } else {
         const error = await response.json();
-        alert(error.message || "Erro ao criar leilão");
+        alert(error.message || "Erro ao criar lance");
       }
     } catch (e) {
       alert("Erro ao criar leilão");
@@ -67,14 +75,11 @@ export default function LeiloesPage() {
     }
   };
 
+  if (!leilao) {
+    return <div>Carregando...</div>;
+  }
+
   return (
-    <LeilaoForm
-      viewOnly={false}
-      leilao={leilao}
-      onSubmit={handleSubmit}
-      onCancel={handleCloseForm}
-      isLoading={isSaving}
-      isEditing={true}
-    />
+    <LeilaoView onSubmitLance={handleSubmitLance} isLoading={isSaving} leilao={leilao}/>
   );
 }

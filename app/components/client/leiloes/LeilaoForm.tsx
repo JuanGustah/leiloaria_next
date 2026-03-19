@@ -43,7 +43,6 @@ export default function LeilaoForm({
   });
 
   const [showItemForm, setShowItemForm] = useState(false);
-  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState<string[]>([]);
 
   useEffect(() => {
     if (leilao) {
@@ -75,11 +74,6 @@ export default function LeilaoForm({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleCategoriasChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const values = Array.from(e.target.selectedOptions).map(o => o.value);
-    setCategoriasSelecionadas(values);
   };
 
   const handleAddItem = () => {
