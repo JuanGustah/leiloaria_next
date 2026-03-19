@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/lib/context";
 
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -11,6 +12,7 @@ const validateEmail = (email: string): boolean => {
 
 export default function LoginForm() {
   const router = useRouter();
+  const userContext = useUser();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -85,6 +87,7 @@ export default function LoginForm() {
         localStorage.setItem("user", JSON.stringify(data.user));
       }
       // Redirecionar sempre para a home, o middleware faz o resto
+      await userContext.refreshUser();
       router.push("/");
       setIsLoading(false);
     } catch (error) {

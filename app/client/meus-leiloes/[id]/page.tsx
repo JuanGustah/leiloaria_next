@@ -49,7 +49,24 @@ export default function LeilaoPage() {
   
 
   const handleCloseForm = () => {
-    router.push("/client/leiloes");
+    router.push("/client/meus-leiloes");
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Tem certeza que deseja cancelar este leilão?")) return;
+    try {
+      const response = await fetch(`/api/client/leiloes/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        router.push(`/client/meus-leiloes`);
+      } else {
+        const error = await response.json();
+        alert(error.message || "Erro ao cancelar leilão");
+      }
+    } catch (e) {
+      alert("Erro ao cancelar leilão");
+    }
   };
 
   const handleSubmit = async (data: LeilaoFormData) => {
@@ -78,6 +95,6 @@ export default function LeilaoPage() {
   }
 
   return (
-    <LeilaoForm onCancel={handleCloseForm} isLoading={isLoading} isEditing={true} leilao={leilao} onSubmit={handleSubmit} />
+    <LeilaoForm handleClose={handleCloseForm} isLoading={isLoading} isEditing={true} leilao={leilao} onSubmit={handleSubmit} onCancel={handleDelete}/>
   );
 }

@@ -136,7 +136,7 @@ export default function LeilaoList({ leiloes, isLoading, handleClick, fromOwner=
           {/* Ações */}
           <button
             onClick={() => handleClick(leilao.id)}
-            className="w-full px-3 py-2 text-sm bg-[#635EF2] text-white rounded hover:bg-[#4A47B5] transition">
+            className="w-full px-3 py-2 text-sm bg-[#635EF2] text-white rounded hover:bg-[#4A47B5] transition cursor-pointer">
             {leilao.status === StatusLeilao.ABERTO && !fromOwner ? "Participar" : "Ver detalhes"}
           </button>
         </div>

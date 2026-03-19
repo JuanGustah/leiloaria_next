@@ -111,10 +111,14 @@ export default function AuctionTable({
               <td className="px-3 py-3 text-center">
                 <button
                   onClick={() => onDelete(auction.id)}
-                  className="px-3 py-1 text-sm bg-[#F2A2A9] text-white rounded-lg hover:bg-[#E88B95] transition"
-                  title="Excluir leilão"
+                  className={
+                  `px-3 py-1 text-sm rounded-lg transition ${auction.status === "PENDENTE" ? "bg-[#df515d] text-white hover:bg-[#E88B95] cursor-pointer" : "bg-[#d9a8ac] text-white cursor-not-allowed"
+                  }`
+                  }
+                  title="Cancelar leilão"
+                  disabled={auction.status !== "PENDENTE"}
                 >
-                  Excluir
+                  Cancelar
                 </button>
               </td>
             </tr>
