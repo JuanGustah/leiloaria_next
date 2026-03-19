@@ -1,5 +1,7 @@
 import { CondicaoItem, ItemRequest, UpdateItemRequest } from "@/lib/auctions/items";
+import { VendaResponse } from "../vendas/types";
 import { Usuario } from "../auth";
+
 
 export enum StatusLeilao {
   ABERTO = "ABERTO",
@@ -61,6 +63,23 @@ export interface LanceResponse {
   loteId: number;
   usuarioId: number;
   vendaId?: number;
+}
+
+export interface MeusLancesResponse{
+  id: number;
+  timestamp: string;
+  valor: number;
+  usuarioId: number;
+  venda?: VendaResponse;
+  lote: {
+    id: number;
+    nome: string;
+    descricao?: string;
+    itens: ItemResponse[];
+    status: StatusLeilao;
+    fim: string;
+    prazoPagamento: string;
+  }
 }
 
 export interface ItemResponse {

@@ -1,58 +1,40 @@
 export enum FormaPagamento {
-  CARTAO = "CARTAO",
+  CARTAO = "CREDITO",
   PIX = "PIX",
-  BOLETO = "BOLETO",
 }
 
 export enum StatusPagamento {
-  PENDENTE = "PENDENTE",
-  PROCESSANDO = "PROCESSANDO",
-  APROVADO = "APROVADO",
-  RECUSADO = "RECUSADO",
-  CANCELADO = "CANCELADO",
+  PENDENTE = "PENDING",
+  APROVADO = "PAID",
+  RECUSADO = "FAILED",
 }
 
 export enum BandeiraCartao {
   VISA = "VISA",
-  MASTERCARD = "MASTERCARD",
-  ELO = "ELO",
-  AMEX = "AMEX",
+  MASTERCARD = "MASTER_CARD",
 }
 
 export interface VendaResponse {
   id: number;
   valor: number; 
   metodoPagamento?: {
-    id?: number;
-    statusPagamento?: StatusPagamento;
-  };
-  lance?: {
     id: number;
-    valor: number;
+    status: StatusPagamento;
   };
+  lanceId: number;
   createdAt: string; 
   updatedAt: string;
 }
 
 export interface VendaRequest {
-  valor: number; 
   formaPagamento: FormaPagamento;
-  lanceId: number; 
   numeroCartao?: string;
   nomeTitular?: string;
   bandeira?: BandeiraCartao;
   diaVencimento?: number;
   anoVencimento?: number;
-  urlPagamento?: string;
-  id?: number;
 }
 
 export interface UpdateVendaRequest {
   statusPagamento: StatusPagamento;
-}
-
-export interface VendaFormData {
-  valor: string;
-  formaPagamento: FormaPagamento | "";
-  lanceId: string;
 }
