@@ -64,10 +64,10 @@ export default function LeilaoPage() {
           setLeilao(await response.json());
         } else {
           const error = await response.json();
-          alert(error.message || "Erro ao criar leilão");
+          alert(error.message || "Erro ao atualizar leilão");
         }
       } catch (e) {
-        alert("Erro ao criar leilão");
+        alert("Erro ao atualizar leilão");
       } finally {
         setIsSaving(false);
       }

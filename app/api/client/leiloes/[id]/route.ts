@@ -64,16 +64,6 @@ export async function PATCH(
     const { id } = await params;
     const body: any = await _request.json();
 
-    const authUser = await recoverAuthUser();
-    if (!authUser) {
-      return NextResponse.json(
-        { message: "Usuário não autenticado" },
-        { status: 401 }
-      );
-    }
-
-    const idUsuario = authUser.id;
-
     const missingFields: string[] = [];
     if (!body.nome) missingFields.push("nome");
     if (!body.inicio) missingFields.push("inicio");
@@ -118,13 +108,12 @@ export async function PATCH(
 
     const leilaoData: UpdateLeilaoRequest = {
       ...body,
-      idUsuario,
       lanceMinimo: typeof body.lanceMinimo === "string"
         ? parseFloat(body.lanceMinimo)
         : body.lanceMinimo,
     };
 
-    const response = await apiPatch<LeilaoResponse>(`/leiloes${id}`, leilaoData);
+    const response = await apiPatch<LeilaoResponse>(`/leiloes/${id}`, leilaoData);
 
     if (!response.ok) {
       return NextResponse.json(

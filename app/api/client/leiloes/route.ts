@@ -83,8 +83,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!body.descricao || body.descricao.length < 3) {
+        return NextResponse.json(
+          { message: "A descrição deve ter pelo menos 3 caracteres" },
+          { status: 400 }
+        );
+      }
+
     for (const item of body.itens) {
       if (!item.nome || item.nome.length < 3) {
+        return NextResponse.json(
+          { message: "Cada item deve ter nome com pelo menos 3 caracteres" },
+          { status: 400 }
+        );
+      }
+       if (!item.descricao || item.descricao.length < 3) {
         return NextResponse.json(
           { message: "Cada item deve ter nome com pelo menos 3 caracteres" },
           { status: 400 }
