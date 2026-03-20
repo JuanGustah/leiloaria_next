@@ -31,7 +31,7 @@ export default function AuctionsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Tem certeza que deseja excluir este leilão?")) return;
+    if (!confirm("Tem certeza que deseja cancelar este leilão?")) return;
     try {
       const response = await fetch(`/api/admin/auctions/${id}`, {
         method: "DELETE",
@@ -40,10 +40,10 @@ export default function AuctionsPage() {
         await fetchAuctions();
       } else {
         const error = await response.json();
-        alert(error.message || "Erro ao excluir leilão");
+        alert(error.message || "Erro ao cancelar leilão");
       }
     } catch (e) {
-      alert("Erro ao excluir leilão");
+      alert("Erro ao cancelar leilão");
     }
   };
 
