@@ -77,7 +77,7 @@ export default function LeiloesPage() {
       </div>
 
       {isFormOpen && (
-        <LeilaoForm onSubmit={handleSubmit} onCancel={handleCloseForm} isLoading={isSaving} />
+        <LeilaoForm onSubmit={handleSubmit} handleClose={handleCloseForm} isLoading={isSaving} />
       )}
 
       <LeilaoList leiloes={leiloes} isLoading={isLoading} handleClick={editar} fromOwner={true} />

@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { LeilaoFormData, ItemFormData, LeilaoResponse } from "@/lib/auctions/types";
+import { LeilaoFormData, ItemFormData, LeilaoResponse, StatusLeilao } from "@/lib/auctions/types";
 import { CondicaoItem } from "@/lib/auctions/items";
 import ItemForm from "../itens/ItemForm";
 import ItemList from "../itens/itemList";
 import ItemFormList from "../itens/itemFormList";
+import { decodeJwtPayload } from "@/lib/auth/jwt";
+import { isAdminByScope } from "@/lib/auth/access";
 
 interface LeilaoFormProps {
   onSubmit?: (data: LeilaoFormData) => Promise<void>;
-  onCancel: () => void;
+  onCancel?: (id:number) => void;
+  handleClose: () => void;
   isLoading: boolean;
   leilao?: LeilaoResponse;
   viewOnly?: boolean;
@@ -23,6 +26,7 @@ export default function LeilaoForm({
   leilao,
   viewOnly = false,
   isEditing = false,
+  handleClose,
 }: LeilaoFormProps) {
   const [formData, setFormData] = useState<LeilaoFormData>({
     nome: "",
@@ -105,6 +109,19 @@ export default function LeilaoForm({
     if (onSubmit)
       await onSubmit(formData);
   };
+
+  const canCancel = (status: StatusLeilao | undefined, proprietaryEmail: string | undefined, tokenJwt: string | null) => {
+    const payload = tokenJwt
+      ? decodeJwtPayload<{
+        sub?: string;
+        email?: string;
+        scope?: string;
+      }>(tokenJwt)
+      : null;
+
+    const userEmail = payload?.sub;
+    return (status === "PENDENTE" && (userEmail === proprietaryEmail));
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 border border-[#F2F2F2]">
@@ -263,7 +280,7 @@ export default function LeilaoForm({
             <div className="flex gap-3 pt-4 border-t border-[#F2F2F2]">
               <button
                 type="button"
-                onClick={onCancel}
+                onClick={handleClose}
                 className="flex-1 px-4 py-2 border border-[#F2F2F2] text-[#414059] rounded-lg hover:bg-[#F8F8FA] transition font-medium"
                 disabled={isLoading}
               >
@@ -277,6 +294,20 @@ export default function LeilaoForm({
                 {isLoading ? "Salvando..." : isEditing ? "Atualizar Leilão" : "Criar Leilão"}
               </button>
             </div>
+
+            {
+              canCancel(leilao?.status, leilao?.proprietario.email, localStorage.getItem("authToken")) &&
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={()=>{onCancel?.(leilao!.id)}}
+                  className="flex-1 px-4 py-2 bg-[#df515d] text-white rounded-lg hover:bg-[#E88B95] transition disabled:opacity-50 font-medium cursor-pointer"
+                  disabled={isLoading}
+                >
+                  Cancelar Leilão
+                </button>
+              </div>
+            }
           </>
         )}
       </form>
